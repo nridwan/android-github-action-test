@@ -30,7 +30,7 @@ jobs:
           newfilename="${file%.*}-$(date +%s).${file##*.}"
           date=$(date +"%a, %d %b %Y %T %z")
           acl="x-amz-acl:public-read"
-          export APKURL="https://storage.googleapis.com/$BUCKET$AWSPATH$newfilename"
+          $FILEURL="https://storage.googleapis.com/$BUCKET$AWSPATH$newfilename"
           content_type='application/x-compressed-tar'
           string="PUT\n\n$content_type\n$date\n$acl\n/$BUCKET$AWSPATH$newfilename"
           signature=$(echo -en "${string}" | openssl sha1 -hmac "${S3SECRET}" -binary | base64)
@@ -40,7 +40,8 @@ jobs:
             -H "Content-Type: $content_type" \
             -H "$acl" \
             -H "Authorization: AWS ${S3KEY}:$signature" \
-            "$APKURL"
+            "$FILEURL"
+          echo "$FILEURL" >> fileurls.txt
         }
         apk=$(find app/build/outputs/apk -iname '*.apk' | head -n 1)
         putS3 "$apk" 
@@ -50,4 +51,4 @@ jobs:
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       run: |
-        curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"Hello World, new build is ready to download: \n $APKURL\" }" $DISCORD_WEBHOOK
+        curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"Hello World, new build is ready to download: \n $(cat fileurls.txt)\" }" $DISCORD_WEBHOOK
