@@ -12,7 +12,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Test Search File
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug
+    - name: Upload Google Cloud
       env:
         S3KEY: ${{ secrets.S3KEY }}
         S3SECRET: ${{ secrets.S3SECRET }}
@@ -37,6 +39,6 @@ jobs:
             -H "Authorization: AWS ${S3KEY}:$signature" \
             "https://storage.googleapis.com/$BUCKET$AWSPATH$newfilename"
         }
-        test=$(find . -iname '*.yml' | head -n 1)
-        putS3 "$test" 
+        apk=$(find app/build/outputs/apk -iname '*.apk' | head -n 1)
+        putS3 "$apk" 
         exit 0
