@@ -13,6 +13,30 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Test Search File
+      env:
+        S3KEY: ${{ secrets.S3KEY }}
+        S3SECRET: ${{ secrets.S3SECRET }}
+        AWSPATH: ${{ secrets.AWSPATH }}
+        BUCKET: ${{ secrets.BUCKET }}
       run: |
-        test=$(find . -iname '*.kt' | head -n 1)
-        echo $test
+        function putS3
+        {
+          path=$1
+          file=$(basename "$path")
+          newfilename="${file%.*}-$(date +%s).${file##*.}"
+          date=$(date +"%a, %d %b %Y %T %z")
+          acl="x-amz-acl:public-read"
+          content_type='application/x-compressed-tar'
+          string="PUT\n\n$content_type\n$date\n$acl\n/$BUCKET$AWSPATH$file"
+          signature=$(echo -en "${string}" | openssl sha1 -hmac "${S3SECRET}" -binary | base64)
+          curl -X PUT -T "$path" \
+            -H "Host: storage.googleapis.com" \
+            -H "Date: $date" \
+            -H "Content-Type: $content_type" \
+            -H "$acl" \
+            -H "Authorization: AWS ${S3KEY}:$signature" \
+            "https://storage.googleapis.com/$BUCKET$AWSPATH$newfilename"
+        }
+        test=$(find . -iname '*.yml' | head -n 1)
+        putS3 "$test" 
+        exit 0
