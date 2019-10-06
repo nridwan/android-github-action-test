@@ -55,7 +55,7 @@ jobs:
         APP_NAME: Github Actions
       run: |
         pip install requests
-        python .deploy/generate_version.py --release-dir="app/build/outputs/apk/debug"
+        python .deploy/generate_version.py --release.dir="app/build/outputs/apk/debug"
         python .deploy/deploy.py \
           --app.url="$(cat fileurls.txt)" \
           --app.name="$APP_NAME" \
