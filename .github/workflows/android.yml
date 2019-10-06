@@ -60,6 +60,7 @@ jobs:
           --app.url="$(cat fileurls.txt)" \
           --app.name="$APP_NAME" \
           --app.version="$(cat .deploy/version.txt)" \
+          --template.file=".deploy/TEMPLATE" \
           --changelog.file="CHANGELOG.md" \
           --email.to="$EMAIL_TO"
 
