@@ -41,10 +41,10 @@ jobs:
             -H "$acl" \
             -H "Authorization: AWS ${S3KEY}:$signature" \
             "$FILEURL"
-          echo "$FILEURL" >> fileurls.txt
         }
         apk=$(find app/build/outputs/apk -iname '*.apk' | head -n 1)
         putS3 "$apk" 
+        echo "Debug URL: $FILEURL" >> fileurls.txt
         exit 0
         
     - name: Notify Discord
