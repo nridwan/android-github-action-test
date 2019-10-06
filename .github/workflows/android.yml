@@ -42,13 +42,23 @@ jobs:
             -H "Authorization: AWS ${S3KEY}:$signature" \
             "$FILEURL"
         }
-        apk=$(find app/build/outputs/apk -iname '*.apk' | head -n 1)
+        apk=$(find app/build/outputs/apk/debug -iname '*.apk' | head -n 1)
         putS3 "$apk" 
         echo "Debug URL: $FILEURL" >> fileurls.txt
         exit 0
         
-    - name: Notify Discord
+    - name: Notify Discord & Email
       env:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        ZAPIER_WEBHOOK: ${{ secrets.ZAPIER_WEBHOOK }}
+        EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        APP_NAME: Github Actions
       run: |
-        curl -X POST -H "Content-Type: application/json" --data "{ \"content\": \"Hello World, new build is ready to download: \n $(cat fileurls.txt)\" }" $DISCORD_WEBHOOK
+        python .deploy/generate_version.py --release-dir="app/build/outputs/apk/debug"
+        python .deploy/deploy.py \
+          --app.url="$(cat fileurls.txt)" \
+          --app.name="$APP_NAME" \
+          --app.version="$(cat .deploy/version.txt)" \
+          --changelog.file="CHANGELOG.md" \
+          --email.to="$EMAIL_TO"
+
