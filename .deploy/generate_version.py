@@ -1,9 +1,6 @@
 import os
 import argparse
-import requests
 import json
-import re
-import time
 
 OUTPUT_FILE_PARSING_ERROR = 5
 
