@@ -167,5 +167,5 @@ if __name__ == '__main__':
     if not send_email(options.zapier_hook, options.email_to, options.email_cc, options.email_bcc, subject, body):
         exit(ZAPIER_ERROR_CODE)
 
-    if not send_discord(options.discord_hook, subject, body):
+    if not send_discord(options.discord_hook, subject, discord_body):
         exit(DISCORD_ERROR_CODE)

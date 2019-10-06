@@ -8,7 +8,7 @@ Changes:
 {change_log}
 
 This email was sent automatically, please do not reply.
-#body
+#discord_body
 **New {app_name} release, version {app_version}**
 Hello World! New {app_name} version is available for download:
 {app_download_url}
