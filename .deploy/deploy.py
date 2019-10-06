@@ -134,7 +134,7 @@ def get_email(app_name, app_version, app_url, changes, template_file_path):
             elif target == target_discord_body:
                 discord_body += line + '\n'
     
-    return subject.rstrip(), body.rstrip()
+    return subject.rstrip(), body.rstrip(), discord_body.rstrip()
 
 
 if __name__ == '__main__':
