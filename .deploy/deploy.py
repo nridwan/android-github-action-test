@@ -147,6 +147,7 @@ if __name__ == '__main__':
     parser.add_argument('--changelog.file', dest='changelog_file', help='path to changelog file', required=True)
     parser.add_argument('--template.file', dest='template_file', help='path to email template file', required=True)
     parser.add_argument('--zapier.hook', dest='zapier_hook', help='zapier email web hook', required=True)
+    parser.add_argument('--discord.hook', dest='discord_hook', help='discord email web hook', required=True)
     parser.add_argument('--email.to', dest='email_to', help='email recipients', required=True)
     parser.add_argument('--email.cc', dest='email_cc', help='email recipients (CC)', required=False, default='')
     parser.add_argument('--email.bcc', dest='email_bcc', help='email recipients (BCC)', required=False, default='')
