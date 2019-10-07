@@ -38,7 +38,7 @@ def send_discord(discord_hook, subject, body):
     DISCORD_SEND_DATA['content'] = body
 
     r = requests.post(discord_hook, data=json.dumps(DISCORD_SEND_DATA), headers=headers)
-
+    print r
     return r.status_code == requests.codes.ok
 
 def send_email(zapier_hook, to, cc, bcc, subject, body):
