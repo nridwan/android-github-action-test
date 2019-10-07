@@ -16,13 +16,11 @@ jobs:
       
     - name: Build with Gradle
       run: |
-        echo "$GITHUB_REF"
-        if [ "${GITHUB_REF%%/*}" "==" "dev"]; then
-          exit 1
+        if ["${${GITHUB_REF#refs/tags/}%%/*}" == "dev"]; then
+          ./gradlew assembleDebug
         else
-          exit 2
+          exit 1
         fi
-        exit 0
       
     - name: Upload Google Cloud
       env:
@@ -31,6 +29,11 @@ jobs:
         AWSPATH: ${{ secrets.AWSPATH }}
         BUCKET: ${{ secrets.BUCKET }}
       run: |
+        if ["${${GITHUB_REF#refs/tags/}%%/*}" == "dev"]; then
+          apkdir="debug"
+        else
+          exit 1
+        fi
         function putS3
         {
           path=$1
@@ -50,7 +53,7 @@ jobs:
             -H "Authorization: AWS ${S3KEY}:$signature" \
             "$FILEURL"
         }
-        apk=$(find app/build/outputs/apk/debug -iname '*.apk' | head -n 1)
+        apk=$(find app/build/outputs/apk/$apkdir -iname '*.apk' | head -n 1)
         putS3 "$apk" 
         echo "Debug URL: $FILEURL" >> fileurls.txt
         exit 0
@@ -63,7 +66,12 @@ jobs:
         APP_NAME: Github Actions
       run: |
         pip install requests
-        python .deploy/generate_version.py --release.dir="app/build/outputs/apk/debug"
+        if ["${${GITHUB_REF#refs/tags/}%%/*}" == "dev"]; then
+          apkdir="debug"
+        else
+          exit 1
+        fi
+        python .deploy/generate_version.py --release.dir="app/build/outputs/apk/$apkdir"
         python .deploy/deploy.py \
           --app.url="$(cat fileurls.txt)" \
           --app.name="$APP_NAME" \
