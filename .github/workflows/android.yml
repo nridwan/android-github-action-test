@@ -65,4 +65,5 @@ jobs:
           --email.to="$EMAIL_TO" \
           --zapier.hook="$ZAPIER_WEBHOOK" \
           --discord.hook="$DISCORD_WEBHOOK"
+        exit 0
 
