@@ -63,11 +63,6 @@ jobs:
         APP_NAME: Github Actions
       run: |
         pip install requests
-        if ["${${GITHUB_REF#refs/tags/}%%/*}" == "dev"]; then
-          apkdir="debug"
-        else
-          exit 1
-        fi
         python .deploy/generate_version.py --release.dir="$(cat builddir.txt)"
         python .deploy/deploy.py \
           --app.url="$(cat fileurls.txt)" \
