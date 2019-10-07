@@ -16,7 +16,8 @@ jobs:
       
     - name: Build with Gradle
       run: |
-        if ["${${GITHUB_REF#refs/tags/}%%/*}" == "dev"]; then
+        git_tags=${GITHUB_REF#refs/tags/}
+        if ["${git_tags%%/*}" == "dev"]; then
           ./gradlew assembleDebug
         else
           exit 1
