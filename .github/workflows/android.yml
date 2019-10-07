@@ -16,6 +16,7 @@ jobs:
       
     - name: Build with Gradle
       run: |
+        echo "${GITHUB_REF%%/*}"
         if [ "${GITHUB_REF%%/*}" "==" "dev"]; then
           exit 1
         else
