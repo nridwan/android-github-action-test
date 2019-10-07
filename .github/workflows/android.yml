@@ -3,7 +3,8 @@ name: Android CI
 on:
   push:
     tags:
-      - master
+      - dev/**
+      - release/**
 
 jobs:
   build:
