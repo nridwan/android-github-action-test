@@ -17,8 +17,9 @@ jobs:
     - name: Build with Gradle
       run: |
         git_tags=${GITHUB_REF#refs/tags/}
-        if ["${git_tags%%/*}" == "dev"]; then
+        if [ "${git_tags%%/*}" == "dev" ]; then
           ./gradlew assembleDebug
+          echo "app/build/outputs/apk/debug" > builddir.txt
         else
           exit 1
         fi
@@ -30,11 +31,6 @@ jobs:
         AWSPATH: ${{ secrets.AWSPATH }}
         BUCKET: ${{ secrets.BUCKET }}
       run: |
-        if ["${${GITHUB_REF#refs/tags/}%%/*}" == "dev"]; then
-          apkdir="debug"
-        else
-          exit 1
-        fi
         function putS3
         {
           path=$1
@@ -54,7 +50,7 @@ jobs:
             -H "Authorization: AWS ${S3KEY}:$signature" \
             "$FILEURL"
         }
-        apk=$(find app/build/outputs/apk/$apkdir -iname '*.apk' | head -n 1)
+        apk=$(find $(cat builddir.txt) -iname '*.apk' | head -n 1)
         putS3 "$apk" 
         echo "Debug URL: $FILEURL" >> fileurls.txt
         exit 0
@@ -72,7 +68,7 @@ jobs:
         else
           exit 1
         fi
-        python .deploy/generate_version.py --release.dir="app/build/outputs/apk/$apkdir"
+        python .deploy/generate_version.py --release.dir="$(cat builddir.txt)"
         python .deploy/deploy.py \
           --app.url="$(cat fileurls.txt)" \
           --app.name="$APP_NAME" \
