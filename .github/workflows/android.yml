@@ -16,5 +16,5 @@ jobs:
       
     - name: Build with Gradle
       run: |
-        javac -v
+        javac -version
 
